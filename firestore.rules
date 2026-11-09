@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if
+        request.resource.data.keys().hasOnly(['name', 'rating', 'message', 'createdAt']) &&
+        request.resource.data.rating is int &&
+        request.resource.data.rating >= 1 &&
+        request.resource.data.rating <= 5 &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 35 &&
+        request.resource.data.message is string &&
+        request.resource.data.message.size() <= 500;
+      allow update, delete: if false;
+    }
+  }
+}
